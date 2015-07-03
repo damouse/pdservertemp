@@ -57,3 +57,4 @@ target/
 
 
 #End boilerplate ignores
+*.egg-info

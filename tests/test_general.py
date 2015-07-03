@@ -5,6 +5,6 @@ def testBuild():
 
 
 def testImportServer():
-    ''' Server imports correctly '''
+    ''' Package imports correctly '''
     import pdserver
     assert 1

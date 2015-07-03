@@ -7,7 +7,7 @@ and starts the server here. All database interaction is handled in the db packag
 
 
 def main():
-    pass
+    print 'Starting main'
 
 if __name__ == '__main__':
     main()
