@@ -1,5 +1,7 @@
 '''
-Base and shared functionality for API methods
+Base and shared functionality for API methods.
+
+If this file is still noisy, its because it contains a whole bit of testing code.
 '''
 
 from twisted.web import xmlrpc
@@ -16,6 +18,13 @@ import sys
 
 class Base(xmlrpc.XMLRPC):
 
+    def xmlrpc_authentication(self, email, password):
+        '''
+        Authenticate the user and return some method of identifying him or herself
+        '''
+
+        pass
+
     def xmlrpc_echo(self, x):
         return x
 
@@ -31,10 +40,6 @@ class Base(xmlrpc.XMLRPC):
                 'age': '23',
                 'password': '12345678',
             })
-
-        # This isn't needed most likely, but the proxy doesn't like dealing
-        # with None
-        return True
 
     def xmlrpc_instantiateTx(self, n):
         ''' A new router instance just came up. Save it.  '''
