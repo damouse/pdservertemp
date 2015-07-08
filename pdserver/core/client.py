@@ -1,5 +1,5 @@
 '''
-A testing file. 
+A testing file.
 '''
 
 import time
@@ -10,6 +10,22 @@ from twisted.internet import reactor
 from twisted.internet import defer
 
 startTime = None
+
+
+class RpcClient:
+
+    '''
+    Remote client RPC wrapper. Translates seemingly local calls
+    into remote RPC calls.
+
+    Will aleays return deferreds
+    '''
+
+    def __init__(self, host, port):
+        self.proxy = Proxy(host + ':' + str(7040), allowNone=True)
+
+    def __call__(self, command, *args):
+        self.proxy.callRemote(command, args)
 
 
 class Thing:
@@ -41,35 +57,28 @@ def kill(stuff):
     reactor.stop()
 
 
-def main():
-    proxy = Proxy('http://localhost:7040/', allowNone=True)
-
-    # Benching txmongo
-    n = 1
+def sync(isSynchronous, proxy, n):
     global startTime
     startTime = time.time()
 
     defs = []
     print 'Synchronous--'
 
-    # base tests
-    # for i in range(n):
-    #     defs.append(proxy.callRemote('instantiate', 1000).addCallbacks(printValue, printError))
-
-    # defer.DeferredList(defs).addCallback(clock).addCallback(kill)
-
-    print 'Asynchronous--'
-    startTime = time.time()
-    defs = []
+    command = 'instantiate' if isSynchronous else 'instantiateTx'
 
     # base tests
     for i in range(n):
-        defs.append(proxy.callRemote('instantiateTx', 1000).addCallbacks(printValue, printError))
+        defs.append(proxy.callRemote(command, 100).addCallbacks(printValue, printError))
 
     defer.DeferredList(defs).addCallback(clock).addCallback(kill)
 
-    # raw testing
-    # defs.append(proxy.callRemote('instantiateTx', 1000).addCallbacks(printValue, printError))
+
+def main():
+    # rpcClient = RpcClient('localhost', '7040')
+    proxy = Proxy('http://localhost:7040/', allowNone=True)
+
+    # Benching txmongo
+    # sync(False, proxy, 1000)
 
     # Testing the proxy calls
     # proxy.callRemote('echo', 'hello').addCallbacks(printValue, printError)
@@ -77,7 +86,7 @@ def main():
     # proxy.callRemote('snappy.add', 6, 5).addCallbacks(printValue, printError)
 
     # drop the test db
-    # proxy.callRemote('dropTest').addCallbacks(printValue, printError)
+    proxy.callRemote('dropTest').addCallbacks(printValue, printError).addCallback(lambda ign: reactor.stop())
 
     reactor.run()
 
