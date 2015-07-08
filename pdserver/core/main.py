@@ -1,56 +1,47 @@
-'''
-Paradrop server v2.
+"""Paradrop server.
 
-Entry point into the server. Imports protocols/resources from toolsapi and pdapi
-and starts the server here. All database interaction is handled in the db package
-'''
+Usage:
+    pdserver start <host> <port> <github-url> 
+    paradrop snap-install <host> <port>
+    paradrop (-h | --help)
+    paradrop --version
+Options:
+    -h --help     Show this screen.
+    --version     Show version.
+"""
 
+
+from docopt import docopt
 import twisted
-import time
 from twisted.web import xmlrpc, server
-import client
+
+from pdserver.api import base, pdsnappy, pdtools
+
+PORT = 7040
 
 
-class Example(xmlrpc.XMLRPC):
+def main():
+    # Skipping args for now
+    # args = docopt(__doc__, version='Paradrop build tools v0.1')
+    # print(args)
 
-    """
-    An example object to be published.
-    """
+    # if args['install']:
+    #     installChute(args['<host>'], args['<port>'], args['<github-url>'])
 
-    def xmlrpc_echo(self, x):
-        """
-        Return all passed args.
-        """
-        return x
+    # if args['snap-install']:
+    #     print 'Not implemented. Sorry, love.'
 
-    def xmlrpc_add(self, a, b):
-        """
-        Return sum of arguments.
-        """
-        return a + b
-
-    def xmlrpc_object(self):
-        stuff = client.Thing()
-        return stuff
-
-
-class Date(xmlrpc.XMLRPC):
-
-    """
-    Serve the XML-RPC 'time' method.
-    """
-
-    def xmlrpc_time(self):
-        """
-        Return UNIX time.
-        """
-        return time.time()
-
-if __name__ == '__main__':
     print 'Starting Server'
     from twisted.internet import reactor
-    r = Example()
-    date = Date()
-    r.putSubHandler('date', date)
-    reactor.listenTCP(7060, server.Site(r))
+
+    # Get the heirarchical servers and assign them under the base object
+    r = base.Base()
+    r.putSubHandler('snappy', pdsnappy.Snappy())
+    r.putSubHandler('tools', pdtools.Tools())
+
+    reactor.listenTCP(PORT, server.Site(r))
     reactor.run()
+
+
+if __name__ == '__main__':
+    main()

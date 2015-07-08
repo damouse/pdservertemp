@@ -23,17 +23,21 @@ class Thing:
 
 def printValue(value):
     print repr(value)
-    reactor.stop()
+    # reactor.stop()
 
 
 def printError(error):
     print 'error', error
-    reactor.stop()
+    # reactor.stop()
 
 
 def main():
-    proxy = Proxy('http://localhost:7060/')
-    proxy.callRemote('object').addCallbacks(printValue, printError)
+    proxy = Proxy('http://localhost:7040/')
+
+    proxy.callRemote('echo', 'hello').addCallbacks(printValue, printError)
+    proxy.callRemote('tools.multiply', 6, 5).addCallbacks(printValue, printError)
+    proxy.callRemote('snappy.add', 6, 5).addCallbacks(printValue, printError)
+
     reactor.run()
 
 if __name__ == '__main__':
