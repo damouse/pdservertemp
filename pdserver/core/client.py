@@ -21,11 +21,14 @@ class RpcClient:
     Will aleays return deferreds
     '''
 
-    def __init__(self, host, port):
-        self.proxy = Proxy(host + ':' + str(7040), allowNone=True)
+    def __init__(self, url):
+        self.proxy = Proxy(url, allowNone=True)
 
-    def __call__(self, command, *args):
-        self.proxy.callRemote(command, args)
+    def __getattr__(self, item):
+        def wrap(args):
+            return self.proxy.callRemote(item, args)
+
+        return wrap
 
 
 class Thing:
@@ -74,8 +77,10 @@ def sync(isSynchronous, proxy, n):
 
 
 def main():
-    # rpcClient = RpcClient('localhost', '7040')
-    proxy = Proxy('http://localhost:7040/', allowNone=True)
+    rpcClient = RpcClient('http://localhost:7020/')
+    # proxy = Proxy('http://localhost:7020/', allowNone=True)
+
+    rpcClient.echo('hey').addCallbacks(printValue, printError).addCallback(lambda ign: reactor.stop())
 
     # Benching txmongo
     # sync(False, proxy, 1000)
@@ -86,7 +91,7 @@ def main():
     # proxy.callRemote('snappy.add', 6, 5).addCallbacks(printValue, printError)
 
     # drop the test db
-    proxy.callRemote('dropTest').addCallbacks(printValue, printError).addCallback(lambda ign: reactor.stop())
+    # proxy.callRemote('dropTest').addCallbacks(printValue, printError).addCallback(lambda ign: reactor.stop())
 
     reactor.run()
 

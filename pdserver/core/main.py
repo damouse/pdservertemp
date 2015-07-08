@@ -17,7 +17,7 @@ from twisted.web import xmlrpc, server
 
 from pdserver.api import base, pdsnappy, pdtools
 
-PORT = 7040
+PORT = 7020
 
 
 def main():
