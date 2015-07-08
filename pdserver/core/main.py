@@ -35,7 +35,7 @@ def main():
     from twisted.internet import reactor
 
     # Get the heirarchical servers and assign them under the base object
-    r = base.Base()
+    r = base.Base(allowNone=True)
     r.putSubHandler('snappy', pdsnappy.Snappy())
     r.putSubHandler('tools', pdtools.Tools())
 
@@ -45,10 +45,14 @@ def main():
 
 def TEST():
     '''
-    This is a sandbox
+    This is a sandbox.
     '''
 
-    pass
+    from pdserver.utils.general import Timer
+
+    with Timer(key='Unsync'):
+        print 'hi'
 
 if __name__ == '__main__':
+    # TEST()
     main()

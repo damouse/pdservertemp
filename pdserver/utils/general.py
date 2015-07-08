@@ -11,6 +11,7 @@ class Timer(object):
     Clocking object for benching.
 
     Usage:
+    
         with Timer(key='identifyingKey'):
             #do things that need to be timed
     '''

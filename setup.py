@@ -5,7 +5,7 @@ setup(
     version="0.1",
     author="Paradrop Labs",
     description="Paradrop wireless virtualization",
-    install_requires=['twisted', 'pymongo', 'docopt'],
+    install_requires=['twisted', 'pymongo', 'docopt', 'txmongo'],
     packages=find_packages(),
 
     entry_points={
