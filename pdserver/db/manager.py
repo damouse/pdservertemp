@@ -33,5 +33,5 @@ class Manager(object):
         self.users = self.db.users
 
     def drop():
-        ''' Drops the active database. Be careful '''
+        ''' Drops the active database. Be careful out there. '''
         self.client.drop_database(self.mode)

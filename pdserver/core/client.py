@@ -1,10 +1,6 @@
-import xmlrpclib
-
-# def main():
-#     s = xmlrpclib.Server('http://localhost:7090/')
-#     print 'echo: ' + s.echo("lala")
-#     print 'add: ' + str(s.add(1, 2))
-#     print 'time: ' + str(s.date.time())
+'''
+A testing file. 
+'''
 
 
 from twisted.web.xmlrpc import Proxy

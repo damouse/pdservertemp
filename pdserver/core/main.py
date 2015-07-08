@@ -43,5 +43,12 @@ def main():
     reactor.run()
 
 
+def TEST():
+    '''
+    This is a sandbox
+    '''
+
+    pass
+
 if __name__ == '__main__':
     main()
