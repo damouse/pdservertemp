@@ -1,5 +1,5 @@
 '''
-Model objects. These are rough, homebaked ORM objects. 
+Model objects. These are thin, homebaked ORM objects. 
 '''
 
 import pdserver.utils.logger.out as out
@@ -26,11 +26,3 @@ class Base(object):
     @contents.setter
     def contents(self, contents):
         self._contents = contents
-
-
-class User(object):
-
-    """ User Objects """
-
-    def __init__(self, arg):
-        self.arg = arg
