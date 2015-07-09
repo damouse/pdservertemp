@@ -23,7 +23,7 @@ from twisted.web import xmlrpc, server
 from pdserver.api import base, pdsnappy, pdtools
 import pdserver.model as model
 
-PORT = 7040
+PORT = 7020
 
 
 ###################################################
