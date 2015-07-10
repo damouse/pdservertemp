@@ -50,14 +50,6 @@ class Base(xmlrpc.XMLRPC):
 
     #     return True
 
-    def xmlrpc_test(self):
-        def hi(res):
-            return 'Hi!'
-
-        d = defer.Deferred()
-        d.addCallback(hi)
-        return d.callback(True)
-
 
 def castFailure(failure):
     ''' Converts an exception (or general failure) into an xmlrpc fault for transmission '''

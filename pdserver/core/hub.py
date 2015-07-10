@@ -21,8 +21,8 @@ def login(email, password):
     Validate user credentials. Validation methods raise errors 
     that propogate back up deferred chain, no need to check them.
     '''
-    yield model.user.emailVaild(email)
-    yield model.user.passwordValid(password)
+    model.user.emailVaild(email)
+    model.user.passwordValid(password)
 
     # check db for user object
 

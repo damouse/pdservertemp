@@ -31,7 +31,7 @@ PORT = 7020
 ###################################################
 
 
-def main():
+def main(port=PORT):
     # Skipping args for now
     # args = docopt(__doc__, version='Paradrop build tools v0.1')
     # print(args)

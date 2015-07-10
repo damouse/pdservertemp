@@ -2,6 +2,7 @@
 import pdserver.db
 from twisted.internet import defer
 
+# NOTE: none of the deferreds work! Have to make them sync in order to test it
 
 def testManagerValid():
     ''' Manager object can be created '''
