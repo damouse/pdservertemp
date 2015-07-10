@@ -11,16 +11,7 @@ class PdServerException(Exception): pass
 class InteralException(Exception): pass
 
 
-class InvalidPassword(PdServerException): pass
+class AuthenticationError(PdServerException): pass
 
 
-class UserExists(PdServerException): pass
-
-
-class UserDoesntExists(PdServerException): pass
-
-
-class InvalidPassword(PdServerException): pass
-
-
-class InvalidEmail(PdServerException): pass
+class InvalidCredentials(PdServerException): pass

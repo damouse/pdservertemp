@@ -62,7 +62,7 @@ def createUser(email, password):
     count = yield db.users.count()
 
     if count != 0:
-        raise exceptions.UserExists("A user with that email already exists")
+        raise exceptions.AuthenticationError("A user with that email already exists")
 
     res = yield db.users.insert({'email': email, 'password': password})
     defer.returnValue(res)
@@ -73,6 +73,6 @@ def getUserByEmail(email):
     user = yield db.users.find({'email': email})
 
     if not user:
-        raise exceptions.UserDoesntExists("User with email " + email + " not found")
+        raise exceptions.AuthenticationError("User with email " + email + " not found")
 
     defer.returnValue(user[0])

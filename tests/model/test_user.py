@@ -5,7 +5,7 @@ from nose.tools import assert_raises
 
 
 def testBadPassword():
-    assert_raises(exceptions.InvalidPassword, user.passwordValid, 'asd')
+    assert_raises(exceptions.InvalidCredentials, user.passwordValid, 'asd')
 
 
 def testGoodPassword():
@@ -17,6 +17,6 @@ def testGoodEmail():
 
 
 def testBadEmail():
-    assert_raises(exceptions.InvalidEmail, user.emailVaild, 'asd')
-    assert_raises(exceptions.InvalidEmail, user.emailVaild, 'asd@')
-    assert_raises(exceptions.InvalidEmail, user.emailVaild, '@gmail.com')
+    assert_raises(exceptions.InvalidCredentials, user.emailVaild, 'asd')
+    assert_raises(exceptions.InvalidCredentials, user.emailVaild, 'asd@')
+    assert_raises(exceptions.InvalidCredentials, user.emailVaild, '@gmail.com')

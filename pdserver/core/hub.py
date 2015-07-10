@@ -20,7 +20,7 @@ from pdserver.utils import exceptions
 
 
 @defer.inlineCallbacks
-def api_login(email, password):
+def api_login(username, email, password):
     '''
     Validate user credentials. Validation methods raise errors 
     that propogate back up deferred chain, no need to check them.
@@ -40,7 +40,7 @@ def api_login(email, password):
 
     # create or retrieve access token and return it
 
-    # temp just for testing
+    # temp just for testing-- this should become an internal call within api
     user.pop('_id', None)
     print user
 
@@ -63,8 +63,8 @@ def api_register(email, password):
 
 @defer.inlineCallbacks
 def api_echo(message):
-    user = yield manager.getUserByEmail("damouse2@gmail.com")
-
+    # Because twisted wont allow deferred generator methods to be not-generators.
+    yield 1
     defer.returnValue(message)
 
 

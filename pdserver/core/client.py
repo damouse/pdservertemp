@@ -59,12 +59,21 @@ def sync(isSynchronous, proxy, n):
     defer.DeferredList(defs).addCallback(clock).addCallback(kill)
 
 
+def callOver(n):
+    rpcClient = RpcClient('http://localhost:7020/')
+
+    for i in range(n):
+        rpcClient.login('damouse2@gmail.com', '12345678').addCallbacks(printValue, printError)
+
+
 def main():
     rpcClient = RpcClient('http://localhost:7020/')
     # proxy = Proxy('http://localhost:7020/', allowNone=True)
 
     # rpcClient.register('damouse2@gmail.com', '12345678').addCallbacks(printValue, printError).addCallback(lambda ign: reactor.stop())
     # rpcClient.login('damouse2@gmail.com', '12345678').addCallbacks(printValue, printError).addCallback(lambda ign: reactor.stop())
+
+    # callOver(10)
 
     rpcClient.echo('hi').addCallbacks(printValue, printError).addCallback(lambda ign: reactor.stop())
 
