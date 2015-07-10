@@ -45,7 +45,7 @@ def main(port=PORT):
     print 'Starting Server'
     from twisted.internet import reactor
 
-    # start the database and let the hub have it
+    # boot the database
     pdserver.db.manager.db = pdserver.db.manager.Manager(mode='development')
 
     # Get the heirarchical servers and assign them under the base object

@@ -4,12 +4,14 @@ pdserver.core.hub. These methods are exposed as xmlrpc methods to the internet a
 
 This is done so the hub methods can be called internally (and tested without having to boot
 the server.) 
+
+If you're poking around in here looking for something, you're in the wrong place. 
 '''
 
 from twisted.web import xmlrpc
 from twisted.internet import defer
 import pdserver.core.hub as hub
-from pdserver.utils import exceptions
+from pdserver.utils import *
 
 
 class Base(xmlrpc.XMLRPC):

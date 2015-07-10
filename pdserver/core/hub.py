@@ -11,7 +11,7 @@ import pdserver.db.manager as manager
 from twisted.internet import defer
 
 from pdtools.security import localencryption
-from pdserver.utils import exceptions
+from pdserver.utils import *
 
 
 ###################################################
@@ -20,7 +20,7 @@ from pdserver.utils import exceptions
 
 
 @defer.inlineCallbacks
-def api_login(username, email, password):
+def api_login(username, password):
     '''
     Validate user credentials. Validation methods raise errors 
     that propogate back up deferred chain, no need to check them.
@@ -28,13 +28,11 @@ def api_login(username, email, password):
 
     print 'Loading User'
 
-    model.user.emailVaild(email)
+    model.user.usernameValid(username)
     model.user.passwordValid(password)
 
-    # check db for user object
-    user = yield manager.getUserByEmail(email)
+    user = yield manager.getUser('username', username)
 
-    # check password
     if not localencryption.checkPassword(password, user['password']):
         raise exceptions.InvalidPassword("Passwords do not match")
 
@@ -49,7 +47,8 @@ def api_login(username, email, password):
 
 
 @defer.inlineCallbacks
-def api_register(email, password):
+def api_register(username, email, password):
+    model.user.usernameValid(username)
     model.user.emailVaild(email)
     model.user.passwordValid(password)
 

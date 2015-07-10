@@ -1,11 +1,11 @@
 
 import pdserver.model.user as user
-from pdserver.utils import exceptions
+from pdserver.utils import *
 from nose.tools import assert_raises
 
 
 def testBadPassword():
-    assert_raises(exceptions.InvalidCredentials, user.passwordValid, 'asd')
+    assert_raises(InvalidCredentials, user.passwordValid, 'asd')
 
 
 def testGoodPassword():
@@ -17,6 +17,6 @@ def testGoodEmail():
 
 
 def testBadEmail():
-    assert_raises(exceptions.InvalidCredentials, user.emailVaild, 'asd')
-    assert_raises(exceptions.InvalidCredentials, user.emailVaild, 'asd@')
-    assert_raises(exceptions.InvalidCredentials, user.emailVaild, '@gmail.com')
+    assert_raises(InvalidCredentials, user.emailVaild, 'asd')
+    assert_raises(InvalidCredentials, user.emailVaild, 'asd@')
+    assert_raises(InvalidCredentials, user.emailVaild, '@gmail.com')

@@ -8,10 +8,11 @@ from pymongo import MongoClient
 from twisted.internet import defer
 import txmongo
 
-from pdserver.utils import exceptions
+from pdserver.utils import *
 
 
-# Global access to the database object. Initialzied in core.main.main
+# Module access to the database object. Initialzied in core.main.main. References to this
+# object should never leave the module
 db = None
 
 
@@ -23,7 +24,7 @@ class Manager(object):
         '''
 
         # create a connection to the mongodb. None passed to trigger right away
-        self.client = txmongo.MongoConnection(pool_size=100).callback(None)
+        self.client = txmongo.MongoConnection(pool_size=100)
         self.mode = mode
 
         # Pick the right database
@@ -37,7 +38,6 @@ class Manager(object):
             raise SyntaxError("Mode must be one of ['development', 'production', 'test']. the input " + mode + " is invalid.")
 
         # Pull refs for easier access later (and to declare them for anyone reading this)
-        # Is this necesary? May remove this later
         self.users = self.db.users
         self.routers = self.db.routers
         self.chutes = self.db.chutes
@@ -45,9 +45,9 @@ class Manager(object):
         self.routerInstances = self.db.routerInstances
         self.chuteInstances = self.db.chuteInstances
 
-    def drop():
-        ''' Drops the active database. Be careful out there. '''
-        self.client.drop_database(self.mode)
+    def drop(self):
+        ''' Drops the active database syncrhonously. Be careful out there. '''
+        MongoClient().drop_database(self.mode)
 
 
 # I think these should go in their own files, but while there are only a few of them I'm leaving them here
@@ -56,23 +56,34 @@ def createUser(email, password):
     '''
     Creates a user given their email and password.
 
-    :raises: UserExists if the email is not unique
+    :raises: AuthenticationError
     '''
     yield db.users.find({'email': email})
     count = yield db.users.count()
 
     if count != 0:
-        raise exceptions.AuthenticationError("A user with that email already exists")
+        raise AuthenticationError("A user with that email already exists")
 
     res = yield db.users.insert({'email': email, 'password': password})
     defer.returnValue(res)
 
 
 @defer.inlineCallbacks
-def getUserByEmail(email):
-    user = yield db.users.find({'email': email})
+def getUser(key, value):
+    '''
+    Searches user database using passed key and value. Expects the key to be unique (like email or username)
+    or will raise a ValueError
+
+    :param query: the dictionary to query the database with
+    :type query: dict.
+    :raises: AuthenticationError, ValueError
+    '''
+    user = yield db.users.find({key: value})
 
     if not user:
-        raise exceptions.AuthenticationError("User with email " + email + " not found")
+        raise AuthenticationError("User with key " + key + " not found")
+
+    if len(user) != 1:
+        raise ValueError('Key ' + key + ' is not useful for uniquely identifying a user.')
 
     defer.returnValue(user[0])
