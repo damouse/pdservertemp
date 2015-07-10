@@ -11,57 +11,20 @@ Options:
 """
 
 '''
-This is the entry point and the hub for main functionality. All methods called by the api
-are exposed here. The other modules implement their functionality in a thin way and do not
-crosstalk. 
+This is the entry point to the server and handles all initialization. 
+pdserver.core.hub is where all functionality is implemented. 
 '''
 
 from docopt import docopt
 import twisted
 from twisted.web import xmlrpc, server
 
-import pdserver.api
-import pdserver.model as model
+from pdserver.api import base, pdsnappy, pdtools
 import pdserver.db.manager
+import pdserver.core.hub
 
 PORT = 7020
-db = None
 
-###################################################
-# API Core Functions
-###################################################
-
-
-def login(email, password):
-    '''
-    Validate user credentials. Validation methods raise errors 
-    that propogate back up deferred chain, no need to check them.
-    '''
-    model.user.emailVaild(email)
-    model.user.passwordValid(password)
-
-    # check db for user object
-
-    # create or retrieve access token and return it
-
-    return 'asdf'
-
-
-def registerUser(email, password):
-    model.user.emailVaild(email)
-    model.user.passwordValid(password)
-
-
-def checkinInstance():
-    '''
-    Registers a live chute instance, indicating its alive and has a connection with the 
-    backend. 
-    '''
-    pass
-
-
-def checkinChuteInstance():
-    pass
 
 ###################################################
 # Booting and Initialization
@@ -82,14 +45,13 @@ def main():
     print 'Starting Server'
     from twisted.internet import reactor
 
-    # start the database
-    global db
-    db = pdserver.db.manager.Manager(mode='dev')
+    # start the database and let the hub have it
+    pdserver.core.hub.db = pdserver.db.manager.Manager(mode='development')
 
     # Get the heirarchical servers and assign them under the base object
-    r = pdserver.api.base.Base(allowNone=True)
-    r.putSubHandler('snappy', pdserver.api.pdsnappy.Snappy())
-    r.putSubHandler('tools', pdserver.api.pdtools.Tools())
+    r = base.Base(allowNone=True)
+    r.putSubHandler('snappy', pdsnappy.Snappy())
+    r.putSubHandler('tools', pdtools.Tools())
 
     reactor.listenTCP(PORT, server.Site(r))
     reactor.run()
@@ -128,5 +90,5 @@ def pipe():
             time.sleep(0.5)
 
 if __name__ == '__main__':
-    TEST()
-    # main()
+    # TEST()
+    main()

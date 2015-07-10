@@ -9,26 +9,9 @@ from twisted.web.xmlrpc import Proxy
 from twisted.internet import reactor
 from twisted.internet import defer
 
+from pdtools.coms.client import RpcClient
+
 startTime = None
-
-
-class RpcClient:
-
-    '''
-    Remote client RPC wrapper. Translates seemingly local calls
-    into remote RPC calls.
-
-    Will aleays return deferreds
-    '''
-
-    def __init__(self, url):
-        self.proxy = Proxy(url, allowNone=True)
-
-    def __getattr__(self, item):
-        def wrap(args):
-            return self.proxy.callRemote(item, args)
-
-        return wrap
 
 
 class Thing:
@@ -80,7 +63,7 @@ def main():
     rpcClient = RpcClient('http://localhost:7020/')
     # proxy = Proxy('http://localhost:7020/', allowNone=True)
 
-    rpcClient.echo('hey').addCallbacks(printValue, printError).addCallback(lambda ign: reactor.stop())
+    rpcClient.authentication('damousegmail.com', '12345678').addCallbacks(printValue, printError).addCallback(lambda ign: reactor.stop())
 
     # Benching txmongo
     # sync(False, proxy, 1000)

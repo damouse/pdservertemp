@@ -5,24 +5,21 @@ If this file is still noisy, its because it contains a whole bit of testing code
 '''
 
 from twisted.web import xmlrpc
-# import pdserver.db
 import txmongo
 
 from twisted.internet import defer
 
 # temp
-import time
 from twisted.python import log
 import sys
 
-# import pdserver.core.main as core
+import pdserver.core.hub as hub
 
 
 class Base(xmlrpc.XMLRPC):
 
     def xmlrpc_authentication(self, email, password):
-        # return core.login(email, password)
-        return
+        return hub.login(email, password).addErrback(castFailure)
 
     def xmlrpc_echo(self, x):
         return x
@@ -61,32 +58,38 @@ class Base(xmlrpc.XMLRPC):
         d.addCallback(hi)
         return d.callback(True)
 
-mongo = None
+
+def castFailure(failure):
+    ''' Converts an exception (or general failure) into an xmlrpc fault for transmission '''
+    raise xmlrpc.Fault(123, failure.getErrorMessage())
 
 
-@defer.inlineCallbacks
-def example(n):
-    # insert some data
-    for x in range(n):
-        result = yield mongo.test.instances.insert({'name': 'John', 'age': '23', 'password': '12345678', }, safe=True)
-
-        print result
-
-    count = yield mongo.test.instances.count()
-    print count
-    yield True
+# mongo = None
 
 
-def done(res):
-    reactor.stop()
+# @defer.inlineCallbacks
+# def example(n):
+# insert some data
+#     for x in range(n):
+#         result = yield mongo.test.instances.insert({'name': 'John', 'age': '23', 'password': '12345678', }, safe=True)
 
-if __name__ == '__main__':
-    log.startLogging(sys.stdout)
+#         print result
 
-    global mongo
-    mongo = txmongo.MongoConnection().callback(None)
+#     count = yield mongo.test.instances.count()
+#     print count
+#     yield True
 
-    example(100).addCallback(done)
 
-    from twisted.internet import reactor
-    reactor.run()
+# def done(res):
+#     reactor.stop()
+
+# if __name__ == '__main__':
+#     log.startLogging(sys.stdout)
+
+#     global mongo
+#     mongo = txmongo.MongoConnection().callback(None)
+
+#     example(100).addCallback(done)
+
+#     from twisted.internet import reactor
+#     reactor.run()
