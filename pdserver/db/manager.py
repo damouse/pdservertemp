@@ -39,7 +39,6 @@ class Manager(object):
 
         # Pull refs for easier access later (and to declare them for anyone reading this)
         self.users = self.db.users
-        self.routers = self.db.routers
         self.chutes = self.db.chutes
 
         self.routerInstances = self.db.routerInstances

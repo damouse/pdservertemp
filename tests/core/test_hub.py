@@ -10,18 +10,17 @@ from nose import tools
 from twisted.internet import defer
 
 
-manager.db = manager.Manager(mode='test')
-
 # Refactor these tests!
 
 
 @deferred()
 @defer.inlineCallbacks
 def testRegisterSuceeds():
-    yield hub.api_register('damouse', 'damouse123@gmail.com', '12344567')
+    user = yield hub.api_register('damouse', 'damouse123@gmail.com', '12344567')
     count = yield manager.db.users.find({'username': 'damouse'})
     assert len(count) == 1
-    manager.db.drop()
+    yield manager.db.users.remove({"_id": user})
+    # manager.db.drop()
 
 
 @deferred()
@@ -34,7 +33,7 @@ def testRegisterBadEmail():
         ex = e
 
     assert ex != None
-    manager.db.drop()
+    # manager.db.drop()
 
 
 @deferred()
@@ -47,4 +46,4 @@ def testRegisterBadUsername():
         ex = e
 
     assert ex != None
-    manager.db.drop()
+    # manager.db.drop()
