@@ -21,16 +21,16 @@ def call(res):
     return manager.db.users.find({'username': 'damouse'})
 
 
-@defer.inlineCallbacks
 @deferred()
 def testRegisterSuceeds():
-    d = hub.api_register('damouse', 'damouse123@gmail.com', '12344567')
+    return registerSuceeds().addBoth(end)
 
-    d.addCallback(call)
-    d.addCallback(lambda x: tools.eq_(len(x), 1))
-    d.addBoth(end)
 
-    return d
+@defer.inlineCallbacks
+def registerSuceeds():
+    yield hub.api_register('damouse', 'damouse123@gmail.com', '12344567')
+    count = yield manager.db.users.find({'username': 'damouse'})
+    assert len(count) == 1
 
 
 # @deferred()
