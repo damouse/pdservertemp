@@ -23,7 +23,7 @@ from . import api
 import pdserver.db.manager
 import pdserver.core.hub
 
-PORT = 7020
+PORT = 7010
 
 
 ###################################################
@@ -41,7 +41,7 @@ def main(port=PORT):
 
     # if args['snap-install']:
     #     print 'Not implemented. Sorry, love.'
-
+    print 'starting server...'
 
     # boot the database
     pdserver.db.manager.db = pdserver.db.manager.Manager(mode='development')

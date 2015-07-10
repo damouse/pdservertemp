@@ -20,12 +20,14 @@ class Base(xmlrpc.XMLRPC):
         xmlrpc.XMLRPC.__init__(self, kwargs)
 
         # build a dict of exposed api methods
-        self.apiFunctions = {k.replace('api_', ''): getattr(hub, k) for k in dir(hub) if 'api' in k}
+        self.apiFunctions = {k.replace('api_', ''): apiWrapper(getattr(hub, k)) for k in dir(hub) if 'api_' in k}
 
     def lookupProcedure(self, procedurePath):
         try:
+            f = self.apiFunctions[procedurePath]
+            print f
             return self.apiFunctions[procedurePath]
-        except KeyError, e:
+        except KeyError:
             raise xmlrpc.NoSuchFunction(self.NOT_FOUND, "procedure %s not found" % procedurePath)
 
 
@@ -39,8 +41,7 @@ def castFailure(failure):
     #     print 'Bad exception! ' + str(failure)
     #     raise failure
     # else:
-    print 'API call failure! :'
-    failure.printTraceback()
+    # failure.printTraceback()
     raise xmlrpc.Fault(123, failure.getErrorMessage())
 
 
@@ -57,4 +58,10 @@ def apiWrapper(target):
 
 def castSuccess(res):
     print "Call suceeding with result: " + str(res)
+
+    # screen out Objectids on mongo returns. The remote objects have no
+    # need for them, and they confuse xmlrpc
+    if isinstance(res, dict):
+        res.pop('_id', None)
+
     return res

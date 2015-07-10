@@ -60,14 +60,14 @@ def sync(isSynchronous, proxy, n):
 
 
 def callOver(n):
-    rpcClient = RpcClient('http://localhost:7020/')
+    rpcClient = RpcClient('http://localhost:7010/')
 
     for i in range(n):
         rpcClient.login('damouse2@gmail.com', '12345678').addCallbacks(printValue, printError)
 
 
 def main():
-    rpcClient = RpcClient('http://localhost:7020/')
+    rpcClient = RpcClient('http://localhost:7010/')
     # proxy = Proxy('http://localhost:7020/', allowNone=True)
 
     rpcClient.register('heyotester', 'damouse30@gmail.com', '12345678').addCallbacks(printValue, printError).addCallback(lambda ign: reactor.stop())

@@ -38,10 +38,6 @@ def api_login(username, password):
 
     # create or retrieve access token and return it
 
-    # temp just for testing-- this should become an internal call within api
-    user.pop('_id', None)
-    print user
-
     print 'Returning user'
     defer.returnValue(user)
 
