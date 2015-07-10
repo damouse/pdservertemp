@@ -2,7 +2,8 @@
 Command and control-- the place where all inputs, calls, methods and functionality
 goes to for action.
 
-All methods here return deferreds.
+All methods here return deferreds. There's a reason they're all snake case, see 
+the api builder for hints on why that is. 
 '''
 
 import pdserver.model as model
@@ -19,7 +20,7 @@ from pdserver.utils import exceptions
 
 
 @defer.inlineCallbacks
-def login(email, password):
+def api_login(email, password):
     '''
     Validate user credentials. Validation methods raise errors 
     that propogate back up deferred chain, no need to check them.
@@ -48,7 +49,7 @@ def login(email, password):
 
 
 @defer.inlineCallbacks
-def register(email, password):
+def api_register(email, password):
     model.user.emailVaild(email)
     model.user.passwordValid(password)
 
@@ -58,6 +59,13 @@ def register(email, password):
 
     # login authentication things here
     defer.returnValue(res)
+
+
+@defer.inlineCallbacks
+def api_echo(message):
+    user = yield manager.getUserByEmail("damouse2@gmail.com")
+
+    defer.returnValue(message)
 
 
 def checkinInstance():

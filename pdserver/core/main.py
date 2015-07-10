@@ -19,7 +19,7 @@ from docopt import docopt
 import twisted
 from twisted.web import xmlrpc, server
 
-from pdserver.api import base, pdsnappy, pdtools
+from . import api
 import pdserver.db.manager
 import pdserver.core.hub
 
@@ -49,10 +49,7 @@ def main(port=PORT):
     pdserver.db.manager.db = pdserver.db.manager.Manager(mode='development')
 
     # Get the heirarchical servers and assign them under the base object
-    r = base.Base(allowNone=True)
-    r.putSubHandler('snappy', pdsnappy.Snappy())
-    r.putSubHandler('tools', pdtools.Tools())
-
+    r = api.Base(allowNone=True)
     reactor.listenTCP(PORT, server.Site(r))
     reactor.run()
 

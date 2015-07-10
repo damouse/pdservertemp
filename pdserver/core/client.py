@@ -64,7 +64,9 @@ def main():
     # proxy = Proxy('http://localhost:7020/', allowNone=True)
 
     # rpcClient.register('damouse2@gmail.com', '12345678').addCallbacks(printValue, printError).addCallback(lambda ign: reactor.stop())
-    rpcClient.login('damouse2@gmail.com', '12345678').addCallbacks(printValue, printError).addCallback(lambda ign: reactor.stop())
+    # rpcClient.login('damouse2@gmail.com', '12345678').addCallbacks(printValue, printError).addCallback(lambda ign: reactor.stop())
+
+    rpcClient.echo('hi').addCallbacks(printValue, printError).addCallback(lambda ign: reactor.stop())
 
     # Benching txmongo
     # sync(False, proxy, 1000)
