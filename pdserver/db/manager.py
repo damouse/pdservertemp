@@ -52,19 +52,20 @@ class Manager(object):
 
 # I think these should go in their own files, but while there are only a few of them I'm leaving them here
 @defer.inlineCallbacks
-def createUser(email, password):
+def createUser(username, email, password):
     '''
-    Creates a user given their email and password.
+    Creates a user given their username, email, and password.
 
     :raises: AuthenticationError
     '''
-    yield db.users.find({'email': email})
-    count = yield db.users.count()
+    usersEmail = yield db.users.find({'email': email})
+    usersName = yield db.users.find({'username': username})
 
-    if count != 0:
+    # any users found that match that email or password/
+    if len(usersEmail) != 0 or len(usersName) != 0:
         raise AuthenticationError("A user with that email already exists")
 
-    res = yield db.users.insert({'email': email, 'password': password})
+    res = yield db.users.insert({'username': username, 'email': email, 'password': password})
     defer.returnValue(res)
 
 

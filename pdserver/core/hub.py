@@ -2,12 +2,12 @@
 Command and control-- the place where all inputs, calls, methods and functionality
 goes to for action.
 
-All methods here return deferreds. There's a reason they're all snake case, see 
-the api builder for hints on why that is. 
+All methods here return deferreds. Calls are mixed snake and camel because the 
+api module dynamically builds the calls from methods that start with 'api_'
 '''
 
-import pdserver.model as model
-import pdserver.db.manager as manager
+from pdserver import model
+from pdserver.db import manager
 from twisted.internet import defer
 
 from pdtools.security import localencryption
@@ -50,7 +50,7 @@ def api_register(username, email, password):
 
     password = localencryption.hashPassword(password)
 
-    res = yield manager.createUser(email, password)
+    res = yield manager.createUser(username, email, password)
 
     # login authentication things here
     defer.returnValue(res)
