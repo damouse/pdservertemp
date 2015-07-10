@@ -5,7 +5,7 @@ If this file is still noisy, its because it contains a whole bit of testing code
 '''
 
 from twisted.web import xmlrpc
-import pdserver.db
+# import pdserver.db
 import txmongo
 
 from twisted.internet import defer
@@ -15,44 +15,43 @@ import time
 from twisted.python import log
 import sys
 
+# import pdserver.core.main as core
+
 
 class Base(xmlrpc.XMLRPC):
 
     def xmlrpc_authentication(self, email, password):
-        '''
-        Authenticate the user and return some method of identifying him or herself
-        '''
-
-        pass
+        # return core.login(email, password)
+        return
 
     def xmlrpc_echo(self, x):
         return x
 
-    def xmlrpc_instantiate(self, n):
-        ''' A new router instance just came up. Save it.  '''
-        print 'vanilla'
+    # def xmlrpc_instantiate(self, n):
+    #     ''' A new router instance just came up. Save it.  '''
+    #     print 'vanilla'
 
-        man = pdserver.db.Manager(mode='test')
+    #     man = pdserver.db.Manager(mode='test')
 
-        for i in range(n):
-            man.db.instances.insert_one({
-                'name': 'John',
-                'age': '23',
-                'password': '12345678',
-            })
+    #     for i in range(n):
+    #         man.db.instances.insert_one({
+    #             'name': 'John',
+    #             'age': '23',
+    #             'password': '12345678',
+    #         })
 
-    def xmlrpc_instantiateTx(self, n):
-        ''' A new router instance just came up. Save it.  '''
-        print 'txMongo'
-        return example(n)
+    # def xmlrpc_instantiateTx(self, n):
+    #     ''' A new router instance just came up. Save it.  '''
+    #     print 'txMongo'
+    #     return example(n)
 
-    def xmlrpc_dropTest(self):
-        ''' Drop the test db '''
-        print 'Dropping Test'
-        man = pdserver.db.Manager(mode='test')
-        man.client.drop_database('test')
+    # def xmlrpc_dropTest(self):
+    #     ''' Drop the test db '''
+    #     print 'Dropping Test'
+    #     man = pdserver.db.Manager(mode='test')
+    #     man.client.drop_database('test')
 
-        return True
+    #     return True
 
     def xmlrpc_test(self):
         def hi(res):
@@ -62,25 +61,32 @@ class Base(xmlrpc.XMLRPC):
         d.addCallback(hi)
         return d.callback(True)
 
+mongo = None
+
+
 @defer.inlineCallbacks
 def example(n):
-    mongo = yield txmongo.MongoConnection()
-
-    foo = mongo.test  # `foo` database
-    test = foo.instances  # `test` collection
-
     # insert some data
     for x in range(n):
-        result = yield test.insert({'name': 'John', 'age': '23', 'password': '12345678',
-            }, safe=True)
+        result = yield mongo.test.instances.insert({'name': 'John', 'age': '23', 'password': '12345678', }, safe=True)
 
         print result
 
+    count = yield mongo.test.instances.count()
+    print count
     yield True
+
+
+def done(res):
+    reactor.stop()
 
 if __name__ == '__main__':
     log.startLogging(sys.stdout)
-    example().addCallback(lambda ign: reactor.stop())
+
+    global mongo
+    mongo = txmongo.MongoConnection().callback(None)
+
+    example(100).addCallback(done)
 
     from twisted.internet import reactor
     reactor.run()

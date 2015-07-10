@@ -28,7 +28,7 @@ def emailVaild(email):
         raise InvalidEmail("Email is invalid")
 
 
-class InvaslidPassword(Exception):
+class InvalidPassword(Exception):
     pass
 
 

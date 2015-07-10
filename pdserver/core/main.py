@@ -20,17 +20,19 @@ from docopt import docopt
 import twisted
 from twisted.web import xmlrpc, server
 
-from pdserver.api import base, pdsnappy, pdtools
+import pdserver.api
 import pdserver.model as model
+import pdserver.db.manager
 
 PORT = 7020
-
+db = None
 
 ###################################################
 # API Core Functions
 ###################################################
 
-def loginUser(email, password):
+
+def login(email, password):
     '''
     Validate user credentials. Validation methods raise errors 
     that propogate back up deferred chain, no need to check them.
@@ -38,9 +40,9 @@ def loginUser(email, password):
     model.user.emailVaild(email)
     model.user.passwordValid(password)
 
-    #check db for user object
+    # check db for user object
 
-    #create or retrieve access token and return it 
+    # create or retrieve access token and return it
 
     return 'asdf'
 
@@ -80,10 +82,14 @@ def main():
     print 'Starting Server'
     from twisted.internet import reactor
 
+    # start the database
+    global db
+    db = pdserver.db.manager.Manager(mode='dev')
+
     # Get the heirarchical servers and assign them under the base object
-    r = base.Base(allowNone=True)
-    r.putSubHandler('snappy', pdsnappy.Snappy())
-    r.putSubHandler('tools', pdtools.Tools())
+    r = pdserver.api.base.Base(allowNone=True)
+    r.putSubHandler('snappy', pdserver.api.pdsnappy.Snappy())
+    r.putSubHandler('tools', pdserver.api.pdtools.Tools())
 
     reactor.listenTCP(PORT, server.Site(r))
     reactor.run()
