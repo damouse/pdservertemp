@@ -42,14 +42,14 @@ def main(port=PORT):
     # if args['snap-install']:
     #     print 'Not implemented. Sorry, love.'
 
-    print 'Starting Server'
-    from twisted.internet import reactor
 
     # boot the database
     pdserver.db.manager.db = pdserver.db.manager.Manager(mode='development')
 
     # Get the heirarchical servers and assign them under the base object
     r = api.Base(allowNone=True)
+
+    from twisted.internet import reactor
     reactor.listenTCP(PORT, server.Site(r))
     reactor.run()
 

@@ -15,7 +15,7 @@ from pdserver.utils import *
 
 
 ###################################################
-# API Core Functions
+# Authentication
 ###################################################
 
 
