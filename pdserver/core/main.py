@@ -46,7 +46,7 @@ def main(port=PORT):
     from twisted.internet import reactor
 
     # start the database and let the hub have it
-    pdserver.core.hub.db = pdserver.db.manager.Manager(mode='development')
+    pdserver.db.manager.db = pdserver.db.manager.Manager(mode='development')
 
     # Get the heirarchical servers and assign them under the base object
     r = base.Base(allowNone=True)
@@ -60,10 +60,6 @@ def main(port=PORT):
 ###################################################
 # Random testing code
 ###################################################
-
-def TEST():
-    # pipe()
-    pass
 
 
 def pipe():
@@ -90,5 +86,4 @@ def pipe():
             time.sleep(0.5)
 
 if __name__ == '__main__':
-    # TEST()
     main()

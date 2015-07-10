@@ -5,17 +5,25 @@ Does it make sense to make multiple connection objects to the database? Does tha
 '''
 
 from pymongo import MongoClient
+from twisted.internet import defer
 import txmongo
+
+from pdserver.utils import exceptions
+
+
+# Global access to the database object. Initialzied in core.main.main
+db = None
+
 
 class Manager(object):
 
-    def __init__(self, mode='dev'):
+    def __init__(self, mode='test'):
         '''
         Mode is one of ['test', 'development', 'production']
         '''
 
         # create a connection to the mongodb. None passed to trigger right away
-        self.client = txmongo.MongoConnection().callback(None)
+        self.client = txmongo.MongoConnection(pool_size=100).callback(None)
         self.mode = mode
 
         # Pick the right database
@@ -40,3 +48,31 @@ class Manager(object):
     def drop():
         ''' Drops the active database. Be careful out there. '''
         self.client.drop_database(self.mode)
+
+
+# I think these should go in their own files, but while there are only a few of them I'm leaving them here
+@defer.inlineCallbacks
+def createUser(email, password):
+    '''
+    Creates a user given their email and password.
+
+    :raises: UserExists if the email is not unique
+    '''
+    yield db.users.find({'email': email})
+    count = yield db.users.count()
+
+    if count != 0:
+        raise exceptions.UserExists("A user with that email already exists")
+
+    res = yield db.users.insert({'email': email, 'password': password})
+    defer.returnValue(res)
+
+
+@defer.inlineCallbacks
+def getUserByEmail(email):
+    user = yield db.users.find({'email': email})
+
+    if not user:
+        raise exceptions.UserDoesntExists("User with email " + email + " not found")
+
+    defer.returnValue(user[0])

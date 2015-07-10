@@ -3,6 +3,7 @@ Model operations for users.
 '''
 
 from validate_email import validate_email
+from pdserver.utils import exceptions
 
 
 def passwordValid(password):
@@ -13,7 +14,7 @@ def passwordValid(password):
     :raises: InvalidPassword 
     """
     if len(password) < 8:
-        raise InvalidPassword("Password too short")
+        raise exceptions.InvalidPassword("Password too short")
 
 
 def emailVaild(email):
@@ -25,12 +26,4 @@ def emailVaild(email):
     :raises: InvalidEmail 
     """
     if not validate_email(email):
-        raise InvalidEmail("Email is invalid")
-
-
-class InvalidPassword(Exception):
-    pass
-
-
-class InvalidEmail(Exception):
-    pass
+        raise exceptions.InvalidEmail("Email is invalid")

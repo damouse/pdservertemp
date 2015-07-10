@@ -1,18 +1,19 @@
 
-import pdserver.db
+from pdserver.db import manager
 from twisted.internet import defer
 
 # NOTE: none of the deferreds work! Have to make them sync in order to test it
 
+
 def testManagerValid():
     ''' Manager object can be created '''
-    dbMan = pdserver.db.Manager(mode='development')
+    dbMan = manager.Manager(mode='development')
     assert(dbMan is not None)
 
 
 @defer.inlineCallbacks
 def testInsert():
-    dbMan = pdserver.db.Manager(mode='test')
+    dbMan = manager.Manager(mode='test')
 
     entry = {'content': 'nothing intersting'}
     entries = dbMan.db.entries
@@ -25,43 +26,47 @@ def testInsert():
     dbMan.client.drop_database('test')
 
 
-@defer.inlineCallbacks
-def testDropCollection():
-    dbMan = pdserver.db.Manager(mode='test')
+# def testDropCollection():
+#     dbMan = manager.Manager(mode='test')
 
-    entry = {'content': 'nothing intersting'}
-    entries = dbMan.db.entries
+#     entry = {'content': 'nothing intersting'}
+#     entries = dbMan.db.entries
 
-    yield entries.insert_one(entry)
+#     entries.insert_one(entry).addCallback(success).addErrback(fail)
 
-    # not a great idea to put this here, eh
-    yield dbMan.client.test.entries.drop()
+#     # not a great idea to put this here, eh
+#     block_on(dbMan.client.test.entries.drop())
 
-    count = yield entries.count()
-    assert count == 0
+#     count = block_on(entries.count())
+#     assert count == 0
 
 
-class TestModels:
+# class TestModels:
 
-    def setup(self):
-        self.db = pdserver.db.Manager(mode='test')
+#     def setup(self):
+#         self.db = manager.Manager(mode='test')
 
-    def teardown(self):
-        self.db.client.drop_database('test')
+#     def teardown(self):
+#         self.db.client.drop_database('test')
 
-    @defer.inlineCallbacks
-    def testCreate(self):
-        yield self.db.users.insert_one({
-            'name': 'John',
-            'age': '23',
-            'password': '12345678',
-        })
+#     def testCreate(self):
+#         self.create()
 
-        count = yield self.db.users.count()
-        assert count == 1
+#     @defer.inlineCallbacks
+#     def create(self):
+#         yield self.db.users.insert_one({
+#             'name': 'John',
+#             'age': '23',
+#             'password': '12345678',
+#         })
 
-        user = yield self.db.users.find_one()
-        assert user['name'] == 'John'
+#         assert False
+
+#         count = yield self.db.users.count()
+#         assert count == 1
+
+#         user = yield self.db.users.find_one()
+#         assert user['name'] == 'John'
 
 
 # #####
@@ -72,10 +77,36 @@ stubDb = None
 
 
 def createStubDatabase():
-    stubDb = pdserver.db.Manager(mode='test')
+    stubDb = manager.Manager(mode='test')
     return stubDb
 
 
 def removeStubDatabase():
     stubDb.client.drop_database('test')
     stubDb = None
+
+
+# #####
+# Testing
+# #####
+# import Queue
+
+
+# def success(res):
+#     print 'Succes! ' + str(res)
+#     return 2
+
+
+# def fail(res):
+#     print 'Fail!' + str(res)
+#     return True
+
+
+# def block_on(d, timeout=None):
+#     q = Queue.Queue()
+#     d2 = defer.Deferred().addBoth(q.put)
+
+#     d.addCallback(success).addErrback(fail)
+#     d.chainDeferred(d2)
+
+#     return q.get(timeout=1)
