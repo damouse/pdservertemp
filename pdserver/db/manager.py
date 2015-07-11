@@ -51,7 +51,7 @@ class Manager(object):
 
 # I think these should go in their own files, but while there are only a few of them I'm leaving them here
 @defer.inlineCallbacks
-def createUser(username, email, password):
+def createUser(username, email, password, pdid):
     '''
     Creates a user given their username, email, and password.
 
@@ -64,7 +64,12 @@ def createUser(username, email, password):
     if len(usersEmail) != 0 or len(usersName) != 0:
         raise AuthenticationError("A user with that email already exists")
 
-    res = yield db.users.insert({'username': username, 'email': email, 'password': password})
+    res = yield db.users.insert({
+        'username': username,
+        'email': email,
+        'password': password,
+        'pdid': pdid})
+
     defer.returnValue(res)
 
 

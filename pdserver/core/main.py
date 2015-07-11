@@ -15,9 +15,11 @@ This is the entry point to the server and handles all initialization.
 pdserver.core.hub is where all functionality is implemented. 
 '''
 
+import sys
 from docopt import docopt
-import twisted
-from twisted.web import xmlrpc, server
+from twisted.web import server
+from twisted.internet import reactor
+from twisted.python import log
 
 from . import api
 import pdserver.db.manager
@@ -49,7 +51,7 @@ def main(port=PORT):
     # Get the heirarchical servers and assign them under the base object
     r = api.Base(allowNone=True)
 
-    from twisted.internet import reactor
+    # log.startLogging(sys.stdout)
     reactor.listenTCP(PORT, server.Site(r))
     reactor.run()
 

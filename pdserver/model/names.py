@@ -7,15 +7,7 @@ and a fully-qualified name.
 
 All PDID's are prefaced with a top-level name. This currently serves no purpose 
 other than to make it obvious when a PDID appears, but could be used later
-for alternative namespacing. 
-
-Human versions can have namespace collisions that have to be detected. 
-Full ids cannot have namespace collisions by definition. This has a few consequences:
-    Chute names must be unique
-    Owned router names must be unique
-        pd.damouse.aardvark and pd.mikedabike.aardvark is fine-- different owners
-    Owned group names must be unique
-        Same as above
+for alternative namespacing (development mode, 3rd party servers, etc). 
 
 Each subdomain has a declarative portion in the machine version to clear up 
 ambiguity. This is removed in the human version except where there are collisions. 
@@ -45,6 +37,14 @@ Examples:
 
 Note the additional 'router' namespace in the fully-qualified name in grouped
 instances. This is added for consistency, not namespacing
+
+Human versions can have namespace collisions that have to be detected. 
+Full ids cannot have namespace collisions by definition. This has a few consequences:
+    Chute names must be unique
+    Owned router names must be unique
+        pd.damouse.aardvark and pd.mikedabike.aardvark is fine-- different owners
+    Owned group names must be unique
+        Same as above
 '''
 
 ###################################################
