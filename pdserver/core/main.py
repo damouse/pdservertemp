@@ -25,7 +25,7 @@ from . import api
 import pdserver.db.manager
 import pdserver.core.hub
 
-PORT = 7010
+PORT = 7012
 
 
 ###################################################
@@ -49,7 +49,7 @@ def main(port=PORT):
     pdserver.db.manager.db = pdserver.db.manager.Manager(mode='development')
 
     # Get the heirarchical servers and assign them under the base object
-    r = api.Base(allowNone=True)
+    r = api.Base(pdserver.core.hub, allowNone=True)
 
     # log.startLogging(sys.stdout)
     reactor.listenTCP(PORT, server.Site(r))

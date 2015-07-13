@@ -1,55 +1,39 @@
 '''
 Builds the external API dynamically by scanning for functions that begin with 'api_' in 
-pdserver.core.hub. These methods are exposed as xmlrpc methods to the internet at large. 
+the target module. These methods are exposed as xmlrpc methods to the internet at large. 
 
-This is done so the hub methods can be called internally (and tested without having to boot
+Methods can be called internally (and tested without having to boot
 the server.) 
 
 If you're poking around in here looking for something, you're in the wrong place. 
 '''
 
 from twisted.web import xmlrpc
-from twisted.internet import defer
-import pdserver.core.hub as hub
-from pdserver.utils import *
 
 
 class Base(xmlrpc.XMLRPC):
 
-    def __init__(self, **kwargs):
+    def __init__(self, module, **kwargs):
         xmlrpc.XMLRPC.__init__(self, kwargs)
 
         # build a dict of exposed api methods
-        self.apiFunctions = {k.replace('api_', ''): apiWrapper(getattr(hub, k)) for k in dir(hub) if 'api_' in k}
+        self.apiFunctions = {k.replace('api_', ''): apiWrapper(getattr(module, k)) for k in dir(module) if 'api_' in k}
 
     def lookupProcedure(self, procedurePath):
         try:
-            f = self.apiFunctions[procedurePath]
-            print f
             return self.apiFunctions[procedurePath]
         except KeyError:
             raise xmlrpc.NoSuchFunction(self.NOT_FOUND, "procedure %s not found" % procedurePath)
 
 
 def castFailure(failure):
-    '''
-    Converts an exception (or general failure) into an xmlrpc fault for transmission
-    iff its a known issue (which is most likely a user error.) If its an unknown issue, let it
-    propogate.
-    '''
-    # if not issubclass(exceptions.PdServerException, failure):
-    #     print 'Bad exception! ' + str(failure)
-    #     raise failure
-    # else:
-    # failure.printTraceback()
+    ''' Converts an exception (or general failure) into an xmlrpc fault for transmission. '''
     raise xmlrpc.Fault(123, failure.getErrorMessage())
 
 
 def apiWrapper(target):
-    '''
-    Takes the target api method and adds error and success callbacks so we can intercept them as a last resort
-    before they go out on the wire.
-    '''
+    ''' Add a final line of error and success callbacks before going onto the wire'''
+
     def outside(*args):
         return target(*args).addErrback(castFailure).addCallback(castSuccess)
 
